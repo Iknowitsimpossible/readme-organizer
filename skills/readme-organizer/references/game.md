@@ -54,5 +54,6 @@ python main.py
 
 - **Visuals matter most.** A GIF or screenshot near the top is the single best improvement for a game README. If none exists, leave a TODO and tell the user how to make one (macOS: Cmd+Shift+5 to record the screen).
 - **Controls:** extract them from the key-handling code (`pygame.K_*`, `onKeyPress`, `Input.GetKey`, etc.). Don't guess.
-- **Browser games** (Phaser, plain JS canvas): add a "Play online" link if deployed, and treat local setup like a static web app.
+- **Deployed browser games** (Phaser, three.js, plain JS canvas on GitHub Pages, itch.io, etc.): the play link is the main Usage. Put it right under the opening sentence. Local setup becomes a short secondary section, e.g. "Run it yourself", for people who want to read or change the code. Find the URL in the Pages workflow, the repo homepage, a CNAME file, or the existing README.
+- **Touch and keyboard:** if the game supports both, use a table with one column per input method, not two separate lists.
 - **Credits:** list third-party assets found in `assets/` with their sources or licenses if the repo records them. If you can't find a source, flag it to the user, since unlicensed assets matter when publishing.
