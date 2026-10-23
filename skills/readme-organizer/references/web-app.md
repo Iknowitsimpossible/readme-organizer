@@ -4,6 +4,8 @@ A visitor wants to know: what does it look like, can I try it live, and how do I
 
 ## Skeleton
 
+Adapt this to the project. Use an existing screenshot; omit the image line until an asset exists. Keep only sections that add useful information.
+
 ````markdown
 # Project Name
 
@@ -13,17 +15,7 @@ One sentence: what the site/app is and who it is for.
 
 ![Screenshot](docs/screenshot.png)
 
-## What it does
-
-A short paragraph on the problem it solves and how it works.
-
-- Key feature 1 (strongest selling point first)
-- Key feature 2
-- Key feature 3
-
-Built with: Framework, Language, Database/Hosting.
-
-## Installation
+## Run locally
 
 Requirements: Node.js 20+ (or Python 3.x, etc.)
 
@@ -41,7 +33,7 @@ cp .env.example .env
 
 Then fill in `.env` (explain each variable briefly, never include real values).
 
-## Usage
+Start the app:
 
 ```bash
 npm run dev

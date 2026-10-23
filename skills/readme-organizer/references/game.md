@@ -4,55 +4,42 @@ A visitor wants to know: what does it look like, how do I launch it, and how do 
 
 ## Skeleton
 
+For a deployed browser game, lead with play and controls. For a desktop game, put the verified launch instructions before controls. Use only existing assets and verified links.
+
 ````markdown
 # Game Name
 
 One sentence: the genre and the hook.
 
-![Gameplay](docs/gameplay.gif)
+[Play the game](verified-play-url)
 
-## What it does
+![Describe the actual gameplay image](existing-image-path)
 
-A short paragraph on the concept and the goal of the game.
+## How to play
 
-- Feature 1 (e.g. local 2-player mode)
-- Feature 2
-- Feature 3
+The goal and win/lose conditions in 2–4 sentences.
 
-## Installation
-
-Requirements: Python 3.x, pygame (etc.)
-
-```bash
-git clone https://github.com/user/repo.git
-cd repo
-pip install -r requirements.txt
-```
-
-## Usage
-
-```bash
-python main.py
-```
-
-### Controls
-
-| Key | Action |
+| Input | Action |
 |---|---|
-| Arrow keys | Move |
-| Space | Shoot |
-| Esc | Pause |
+| Verified key or gesture | Action from the input code |
 
-### How to play
+## Run locally
 
-2–4 sentences or bullets: goal, win/lose conditions, any tips.
+Verified runtime requirements, followed by one complete command block:
 
-## Credits   <!-- assets, fonts, music, tutorials used -->
+```bash
+# Clone, enter the project, install dependencies, and launch.
+# Replace these comments with commands verified against the repository.
+```
+
+## Credits
+
+Sources for third-party assets, when recorded in the repository.
 ````
 
 ## Type-specific notes
 
-- **Visuals matter most.** A GIF or screenshot near the top is the single best improvement for a game README. If none exists, leave a TODO and tell the user how to make one (macOS: Cmd+Shift+5 to record the screen).
+- **Visuals matter most.** A representative GIF or screenshot near the top helps visitors understand the game. Prioritize broken launch instructions before visual polish. If none exists, leave a TODO and tell the user how to make one (macOS: Cmd+Shift+5 to record the screen).
 - **Controls:** extract them from the key-handling code (`pygame.K_*`, `onKeyPress`, `Input.GetKey`, etc.). Don't guess.
 - **Deployed browser games** (Phaser, three.js, plain JS canvas on GitHub Pages, itch.io, etc.): the play link is the main Usage. Put it right under the opening sentence. Local setup becomes a short secondary section, e.g. "Run it yourself", for people who want to read or change the code. Find the URL in the Pages workflow, the repo homepage, a CNAME file, or the existing README.
 - **Touch and keyboard:** if the game supports both, use a table with one column per input method, not two separate lists.

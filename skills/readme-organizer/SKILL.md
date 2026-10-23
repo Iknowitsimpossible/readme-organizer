@@ -5,12 +5,12 @@ license: MIT
 compatibility: Works with any coding agent that supports Agent Skills and can run shell commands in a local git repository (for example Claude Code or Codex). Python 3 is optional, for the bundled checker. Not for chat-only apps without access to the repo.
 metadata:
   author: Iknowitsimpossible
-  version: 1.2.0
+  version: 1.3.0
 ---
 
 # README Organizer
 
-Produce a README that answers, in order: **What does this project do? How do I install it? How do I use it?** A visitor should be able to decide in under a minute whether the project is useful to them, and get it running in a few more.
+Produce a README that answers: **What does this project do? How do I install it? How do I use it?** A visitor should be able to decide in under a minute whether the project is useful to them, and get it running in a few more.
 
 ## Important
 
@@ -72,20 +72,27 @@ Tell the user the type and the main reason in one line, e.g. *"Classified as a g
 
 **A README exists:** don't edit it. Write `README-SUGGESTIONS.md` in the repo root with:
 
-1. **Verdict:** one or two sentences on the README's overall state.
-2. **Issues**, most important first. For each: what is wrong or missing, why it matters to a reader, and the exact replacement text.
-3. **Keep:** what is good and should stay.
+1. **Verdict:** one or two sentences naming the most useful improvement.
+2. **Change overview:** a compact table with stable IDs, specific edits, priority (important or optional), and status: **Ready to apply**, **Needs asset**, or **Needs decision**. Order ready fixes by reader impact; distinguish prerequisites from urgency.
+3. **Ready to apply:** for each ID, name the exact heading or text anchor, the operation (insert, replace, move, or remove), and its boundaries. Explain the reader benefit in one sentence, cite the supporting repository fact, and provide one complete copyable Markdown replacement. Do not make the user assemble fragments. For a move or removal, identify the exact block and destination instead.
+4. **Needs your input:** identify the asset or decision required and the next action. Conditional snippets must say when they can be applied. Do not present nonexistent image or license links as ready edits, or choose a license for the author.
+5. **Keep:** a short list of deliberate strengths to preserve.
+6. **Validation:** state which ready changes were checked, which checks were actually performed, and which items remain pending. A passing static check does not prove commands run successfully.
+
+Use whitespace between labels and paragraphs. Avoid repeating “What / Why / Fix” for every item when a short explanation suffices. Keep tables for the overview; put replacement blocks below them. Stable IDs let the user select specific ready changes without referring to list positions.
 
 When reviewing, judge **content, not heading names**. "Run it yourself" counts as Installation, and "Controls" counts as Usage. Suggest renaming a section only if a reader would actually be confused. Keep the author's voice and length. If they trimmed the README on purpose, propose small additions, not a rewrite.
 
 ### Step 5: Validate, then fix
 
-Run the bundled checker on the file you produced:
+For a new README, run the bundled checker on it. For suggestions, first assemble a temporary candidate containing the existing README plus only the **Ready to apply** edits. Keep the original untouched. Check the candidate as though it occupied the original README's location:
 
 ```bash
-python3 scripts/check_readme.py <repo-dir>                         # for README.md
-python3 scripts/check_readme.py <repo-dir> README-SUGGESTIONS.md   # for suggestions
+python3 scripts/check_readme.py <repo-dir>
+python3 scripts/check_readme.py <repo-dir> /absolute/temp/candidate.md --relative-to README.md
 ```
+
+For a README under `docs/`, use `--relative-to docs/README.md`. Do not validate the suggestions report as a substitute: links inside fenced replacement snippets are examples to the parser, not rendered README links. Leave pending assets and decisions out of the candidate and list them separately. Remove the temporary candidate after validation.
 
 (`scripts/` is relative to this skill's folder.) It flags `npm`/`yarn`/`pnpm`/`make` commands with no matching script or target, `python`/`node` files that aren't tracked, links and images to missing files, clone URLs that don't match `origin`, and lists TODO markers.
 
@@ -95,14 +102,14 @@ For each error, fix the text and run the checker again. Stop when it reports 0 e
 
 Then confirm the checks a script can't do:
 
-- [ ] the three core topics (what, install, use) are covered, in that order;
+- [ ] purpose, first successful use, and setup are covered in the order most useful to the primary reader;
 - [ ] a stranger could go from `git clone` to a running project using only the README;
 - [ ] every feature claimed is visible in the code.
 
 ### Step 6: Report
 
 - **New README:** show it and list every TODO marker.
-- **Suggestions:** summarize the top three in chat and ask which to apply. Apply only the approved ones, editing the README in place and running the checker again. Remind the user that `README-SUGGESTIONS.md` is a working file to delete, not commit.
+- **Suggestions:** summarize the ready edits by ID and list pending inputs separately. Ask which IDs to apply unless the user has already authorized those edits. Apply only the approved ones, editing the README in place and running the checker again. Remind the user that `README-SUGGESTIONS.md` is a working file to delete, not commit.
 
 ## Examples
 
@@ -112,10 +119,10 @@ User says: "Review the README of my penalty-night project."
 
 Actions:
 1. Step 1: the only untracked folder is `.claude/`, and `main` is in sync with `origin`, so continue.
-2. Step 2: package.json (Vite, three.js, `engines.node` 22.12+, scripts `dev`/`test`), a Pages workflow, a README with a play link and a controls table, and a recent "Trim the README" commit.
+2. Step 2: package.json (Vite, three.js, `engines.node` `^22.12.0 || ^24.0.0 || >=26.0.0`, scripts `dev`/`test`), a Pages workflow, a README with a play link and a controls table, and a recent "Trim the README" commit.
 3. Step 3: classified as a game (three.js browser game on GitHub Pages).
-4. Step 4: wrote suggestions: add a gameplay GIF; add `git clone` and the Node 22.12 requirement; the repo is public with no LICENSE. Keep the controls table, after confirming it against `src/input/keyboard.js`. Keep the short length.
-5. Step 5: the checker reports 0 errors.
+4. Step 4: wrote R1 (ready): complete local setup with clone steps and the precise supported Node ranges; R2 (needs asset): gameplay image; R3 (needs decision): licensing; R4 (optional, ready): deployment badge. Keep the controls table, after confirming it against `src/input/keyboard.js`. Keep the short length.
+5. Step 5: assembled a temporary README with R1 and R4 only and checked it at the original README location. Reported R2 and R3 as pending, not validated.
 
 Result: the user gets four focused suggestions and their README is untouched.
 

@@ -11,7 +11,28 @@ Point it at a finished repo and it will:
 - **Identify the project type** (web app, library, CLI tool, game, data/ML, or coursework) and use a README template made for that type. A game gets controls and a play link; a library gets an import example.
 - **Cover the three things readers need:** what the project does, how to install it, and how to use it.
 - **Check every command against your code.** A bundled checker flags `npm run` scripts that don't exist, links to missing files, and clone URLs that point to the wrong repo. Anything it can't confirm is left as a `TODO` instead of being guessed.
-- **Suggest, never overwrite.** If you already have a README, it writes `README-SUGGESTIONS.md` with ranked, ready-to-paste fixes, notes what to keep, and applies only the changes you approve.
+- **Suggest, never overwrite.** If you already have a README, it writes `README-SUGGESTIONS.md` with exact, ready-to-apply edits, separates missing assets and decisions, and notes what to keep. It applies only authorized changes.
+
+## Example review
+
+A review starts with a small set of concrete changes. Here is the revised [penalty-night example](examples/penalty-night-suggestions.md):
+
+| ID | Change | Status |
+|---|---|---|
+| R1 | Complete local setup | Ready to apply |
+| R2 | Add a gameplay image | Needs asset |
+| R3 | Document a licensing choice | Needs decision |
+| R4 | Add a deployment badge | Ready to apply · optional |
+
+Each ready edit includes an exact location and a complete replacement block. Pending items explain what you need to supply first. Say **“Apply R1”** to select a change.
+
+| Before | Proposed result |
+|---|---|
+| Setup starts at `npm install` | Supported runtimes, clone steps, installation, and launch in one section |
+| No gameplay preview | A specific image request and placement, awaiting the actual file |
+| Mixed suggestions | Ready edits separated from assets and decisions |
+
+The agent checks a temporary README containing the ready edits before applying anything. The example documents previously recorded project facts; it is not a fresh verification of that game's current repository.
 
 ## Installation
 
@@ -54,7 +75,7 @@ or *"Write a README for this project"*. The skill then:
 2. Reads manifests, entry points, scripts, and deploy configs.
 3. Tells you the project type it detected and why.
 4. Writes `README.md`, or `README-SUGGESTIONS.md` if a README already exists.
-5. Runs the checker, fixes anything it flags, and lists the `TODO` markers left for you (screenshots, deploy URLs, and so on).
+5. Checks the new README or a temporary candidate of the ready edits, and reports pending assets, decisions, and TODOs separately.
 
 ### Run the checker by itself
 
@@ -64,26 +85,14 @@ The checker works without an agent, on any README:
 python3 ~/code/readme-organizer/skills/readme-organizer/scripts/check_readme.py path/to/project
 ```
 
-### Example output
 
-<!-- check-readme: off -->
-From a real run on [penalty-night](https://github.com/Iknowitsimpossible/penalty-night), a browser game. The skill noticed that `package.json` requires Node 22.12+ and that newcomers wouldn't know to clone first:
+To check a proposed README saved outside the project while resolving links as if it were `docs/README.md`:
 
-````diff
- ## Run it yourself
+```bash
+python3 ~/code/readme-organizer/skills/readme-organizer/scripts/check_readme.py path/to/project /tmp/candidate.md --relative-to docs/README.md
+```
 
-+Requires [Node.js](https://nodejs.org) 22.12 or newer.
-+
- ```bash
-+git clone https://github.com/Iknowitsimpossible/penalty-night.git
-+cd penalty-night
- npm install
- npm run dev
- ```
-````
-<!-- check-readme: on -->
-
-It also flagged the missing gameplay GIF and license, and said to keep the controls table and the deliberately short length. Full output: [examples/penalty-night-suggestions.md](examples/penalty-night-suggestions.md).
+The checker performs static command and local-link checks; it does not execute the project's setup or verify remote URLs.
 
 ## Development
 
