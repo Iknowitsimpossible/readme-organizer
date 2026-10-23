@@ -2,10 +2,11 @@
 """Check a README's commands and links against the repository it describes.
 
 Usage:
-    python3 check_readme.py <repo-dir> [readme-file]
+    python3 check_readme.py <repo-dir> [readme-file] [--relative-to README.md]
 
 readme-file defaults to README.md and is resolved relative to repo-dir.
-It can also be README-SUGGESTIONS.md, to check proposed text before it is applied.
+For proposed edits, pass an assembled candidate README, not a suggestions report.
+Use --relative-to with the original README path to resolve candidate links correctly.
 
 Checks:
   - relative links and images point to files tracked by git
@@ -21,6 +22,7 @@ To skip a section, such as an example quoted from another project, wrap it in
 Exit code: 0 if no errors, 1 if any error, 2 on bad usage.
 Standard library only.
 """
+import argparse
 import json
 import re
 import subprocess
@@ -169,11 +171,20 @@ def check_commands(code, repo, tracked):
 
 
 def main():
-    if len(sys.argv) not in (2, 3):
-        print(__doc__.strip().splitlines()[2])
-        return 2
-    repo = Path(sys.argv[1])
-    readme = repo / (sys.argv[2] if len(sys.argv) == 3 else "README.md")
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("repo_dir", type=Path)
+    parser.add_argument("readme_file", nargs="?", default="README.md", type=Path)
+    parser.add_argument("--relative-to", type=Path,
+                        help="Original README path within the repo, for candidate link resolution")
+    args = parser.parse_args()
+    repo = args.repo_dir.resolve()
+    readme = repo / args.readme_file
+    original = repo / (args.relative_to if args.relative_to is not None else args.readme_file)
+    if args.relative_to is not None:
+        try:
+            original.resolve().relative_to(repo)
+        except ValueError:
+            parser.error("--relative-to must identify a README inside the repository")
     if not readme.exists():
         print(f"ERROR: {readme} does not exist")
         return 1
@@ -186,7 +197,7 @@ def main():
 
     text = readme.read_text()
     code, prose = split_code_and_prose(text)
-    errors = check_links(prose, tracked, readme.parent, repo) + check_commands(code, repo, tracked)
+    errors = check_links(prose, tracked, original.parent, repo) + check_commands(code, repo, tracked)
     todos = [number for number, line in enumerate(text.splitlines(), start=1) if TODO.search(line)]
 
     for number, message in sorted(errors):

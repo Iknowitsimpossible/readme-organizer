@@ -190,7 +190,7 @@ class TestLinks(CheckerTestCase):
         self.assertEqual(code, 0, out)
 
     def test_links_inside_code_blocks_are_not_checked(self):
-        # Suggestion files show proposed Markdown inside fences; images there may not exist yet.
+        # Literal Markdown examples are not rendered links; validate assembled candidates instead.
         self.write_readme("""
             ```markdown
             ![Gameplay](docs/gameplay.gif)
@@ -198,6 +198,34 @@ class TestLinks(CheckerTestCase):
         """)
         code, out = self.run_checker()
         self.assertEqual(code, 0, out)
+
+
+class TestCandidateReadme(CheckerTestCase):
+    def test_external_candidate_uses_original_readme_location(self):
+        self.add_file("LICENSE", "MIT")
+        self.add_file("docs/preview.png", "image fixture")
+        with tempfile.TemporaryDirectory() as temporary:
+            candidate = Path(temporary) / "candidate.md"
+            candidate.write_text("[license](../LICENSE)\n![preview](preview.png)\n")
+            code, out = self.run_checker(str(candidate), "--relative-to", "docs/README.md")
+        self.assertEqual(code, 0, out)
+
+    def test_candidate_detects_missing_asset_and_invalid_command(self):
+        self.add_package_json({"dev": "vite"})
+        self.write_readme("original README\n")
+        with tempfile.TemporaryDirectory() as temporary:
+            candidate = Path(temporary) / "candidate.md"
+            candidate.write_text("![preview](docs/missing.png)\n```bash\nnpm run missing\n```\n")
+            code, out = self.run_checker(str(candidate), "--relative-to", "README.md")
+        self.assertEqual(code, 1)
+        self.assertIn("docs/missing.png", out)
+        self.assertIn('no "missing" script', out)
+        self.assertEqual((self.repo / "README.md").read_text(), "original README\n")
+
+    def test_original_location_cannot_escape_repo(self):
+        self.write_readme("# Candidate\n")
+        code, _ = self.run_checker("README.md", "--relative-to", "../README.md")
+        self.assertEqual(code, 2)
 
 
 class TestCloneUrl(CheckerTestCase):

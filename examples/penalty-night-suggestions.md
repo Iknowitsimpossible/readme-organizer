@@ -1,35 +1,32 @@
-# README suggestions for penalty-night
+# README review · penalty-night
 
-Real output from running readme-organizer on [penalty-night](https://github.com/Iknowitsimpossible/penalty-night), saved here as an example. (In a real project this is a working file you delete after applying the suggestions.)
+The README already has a clear hook, a play link, and useful controls. Complete the local setup first; a gameplay image would make the opening more inviting once one is available.
 
-**Classified as:** game (browser game: three.js + Vite, deployed to GitHub Pages).
+This revised report uses the repository facts recorded in the original review. It is a presentation example, not a fresh validation of penalty-night.
 
-## Verdict
+## Proposed changes
 
-A strong README already: a clear one-line hook, the play link at the top, and a controls table that matches the code. The main gaps are no visual, and local setup that skips the steps a newcomer needs (cloning, Node version).
+| ID | Change | Priority | Status |
+|---|---|---|---|
+| R1 | Complete “Run it yourself” | Important | Ready to apply |
+| R2 | Show a gameplay image below the play link | Important | Needs asset |
+| R3 | Document the author's licensing choice | Optional | Needs decision |
+| R4 | Add a deployment status badge | Optional | Ready to apply |
 
-## Issues (most important first)
+## Ready to apply
 
-### 1. No screenshot or GIF
+### R1 · Complete local setup
 
-**What:** No image is tracked in the repo, and the README has none.
-**Why it matters:** For a game, a visual is what makes a visitor click "Play it here". It is the single biggest improvement available.
-**Fix:** Record a short clip of a penalty (macOS: Cmd+Shift+5 → record selected portion), convert it to a GIF or take a screenshot, save it as `docs/gameplay.gif`, then add this right under the opening paragraph:
+**Location:** Replace “Run it yourself,” from its heading to just before the next heading.
 
-```markdown
-![A penalty being taken under the floodlights](docs/gameplay.gif)
-```
+Newcomers need the clone steps and supported Node versions before installing. The original review recorded `engines.node` as `^22.12.0 || ^24.0.0 || >=26.0.0` and confirmed the `dev` and `test` scripts in `package.json`.
 
-### 2. Local setup skips cloning and the Node requirement
-
-**What:** "Run it yourself" starts at `npm install`. It doesn't say to clone the repo, and doesn't mention that `package.json` requires Node `^22.12.0 || ^24.0.0 || >=26.0.0` (`engines`).
-**Why it matters:** Someone with Node 18 or 20 installed hits a confusing error. A newcomer may not know they need to clone first.
-**Fix:** Replace the "Run it yourself" section with:
+**Replacement:**
 
 ````markdown
 ## Run it yourself
 
-Requires [Node.js](https://nodejs.org) 22.12 or newer.
+Requires [Node.js](https://nodejs.org): 22.x (22.12+), 24.x, or 26+.
 
 ```bash
 git clone https://github.com/Iknowitsimpossible/penalty-night.git
@@ -38,37 +35,57 @@ npm install
 npm run dev
 ```
 
-Then open the address it prints. `npm test` runs the unit tests.
+Open the local address printed in the terminal.
+
+To run the unit tests:
+
+```bash
+npm test
+```
 ````
 
-### 3. No license
+### R4 · Add deployment status
 
-**What:** The repo is public, but it has no `LICENSE` file.
-**Why it matters:** Without a license, the code is "all rights reserved" by default: people can look at it but have no right to reuse it. That's fine if it's what you want, but it should be a deliberate choice.
-**Fix:** Either add a `LICENSE` (MIT is the usual choice for a portfolio project) and end the README with:
+**Location:** Insert directly below the project title, before the opening paragraph.
 
-```markdown
-## License
+The original review identified `.github/workflows/pages.yml` as the deployment workflow. This badge links to its status; it does not independently prove the live deployment is current.
 
-[MIT](LICENSE)
-```
-
-or leave it out on purpose.
-
-### 4. (Optional) Deploy status badge
-
-**What:** `.github/workflows/pages.yml` builds, tests, and deploys on every push to `main`, but nothing shows that.
-**Why it matters:** A green badge tells visitors the live game is current and the tests pass. Low priority.
-**Fix:** Add under the title:
+**Insert:**
 
 ```markdown
 [![Deploy](https://github.com/Iknowitsimpossible/penalty-night/actions/workflows/pages.yml/badge.svg)](https://github.com/Iknowitsimpossible/penalty-night/actions/workflows/pages.yml)
 ```
 
+## Needs your input
+
+### R2 · Supply one gameplay image
+
+**Next action:** Capture a representative penalty scene and save it in the repository, for example as `docs/gameplay.png`. A still image is sufficient; animation is optional.
+
+**Placement:** Immediately below the existing play link, before the next section. Keep the opening paragraph and play link together.
+
+Apply this snippet only after that file exists and is tracked:
+
+```markdown
+![A penalty being taken under the floodlights](docs/gameplay.png)
+```
+
+Adjust the alt text to describe the actual image. This item is not part of the ready-to-apply candidate.
+
+### R3 · Decide whether to add a license
+
+**Next action:** Choose the reuse terms you want, or deliberately leave licensing unchanged. The original review found no `LICENSE` file; this report does not select a license for you.
+
+Once a license is chosen and the file exists, add a short License section linking to it. Until then, there is no ready README edit for this item.
+
 ## Keep
 
-- **The opening paragraph and the "Play it here" link.** They say what the game is and let people play in one click, which matters more than local setup for a browser game.
-- **The Controls table.** Checked against `src/input/keyboard.js` and `src/game.js`: arrows, Space, Z / X, A / D, P / Esc all match.
-- **The keeper tip** about the gold dive bar and the hint zone (matches the `keeperHints` setting in `src/ui/settings.js`).
-- **The short length.** Your last commit trimmed it to the essentials on purpose. These suggestions add about 10 lines.
-- **Section names.** "Run it yourself" and "Controls" fit a game better than generic "Installation" / "Usage" headings, and they cover the same ground.
+- The opening hook and prominent “Play it here” link.
+- The controls table and keeper tip, which the original review checked against the game code.
+- The short length and project-specific headings, including “Run it yourself.”
+
+## Validation and next step
+
+This example has not been rerun against the current game repository. In a live review, assemble R1 and R4 into a temporary copy of the README, check it relative to the original README location, and report the actual results. R2 and R3 remain pending.
+
+Select changes by ID, for example: “Apply R1.”

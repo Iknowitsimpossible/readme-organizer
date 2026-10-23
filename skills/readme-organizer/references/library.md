@@ -4,20 +4,14 @@ A visitor wants to know: does this solve my problem, how do I install it, and wh
 
 ## Skeleton
 
+Use a minimal example as the main demonstration. Add a separate overview only when the opening and example leave an important question unanswered.
+
 ````markdown
 # package-name
 
 One sentence: what the library does.
 
 [CI badge] [version badge] [license badge]   <!-- only real ones -->
-
-## What it does
-
-A short paragraph on the problem and approach. If well-known alternatives exist, one sentence on how this one differs, said respectfully.
-
-- Highlight 1
-- Highlight 2
-- Highlight 3
 
 ## Installation
 
