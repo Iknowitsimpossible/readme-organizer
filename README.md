@@ -13,85 +13,42 @@ Point it at a finished repo and it will:
 - **Check every command against your code.** A bundled checker flags `npm run` scripts that don't exist, links to missing files, and clone URLs that point to the wrong repo. Anything it can't confirm is left as a `TODO` instead of being guessed.
 - **Suggest, never overwrite.** If you already have a README, it writes `README-SUGGESTIONS.md` with ranked, ready-to-paste fixes, notes what to keep, and applies only the changes you approve.
 
-### Before and after
-
-<!-- check-readme: off -->
-From a real run on [penalty-night](https://github.com/Iknowitsimpossible/penalty-night), a browser game. The original setup section:
-
-````markdown
-## Run it yourself
-
-```bash
-npm install
-npm run dev
-```
-````
-
-The skill noticed that `package.json` requires Node 22.12+ and that a newcomer wouldn't know to clone first. It suggested:
-
-````markdown
-## Run it yourself
-
-Requires [Node.js](https://nodejs.org) 22.12 or newer.
-
-```bash
-git clone https://github.com/Iknowitsimpossible/penalty-night.git
-cd penalty-night
-npm install
-npm run dev
-```
-````
-<!-- check-readme: on -->
-
-It also flagged the missing gameplay GIF and license, and said to keep the controls table (after checking it against the key-handling code) and the README's deliberately short length. Full output: [examples/penalty-night-suggestions.md](examples/penalty-night-suggestions.md).
-
 ## Installation
 
-You need git, a coding agent that can run shell commands in your project, and optionally Python 3 for the checker.
+**Requirements:** git, and a coding agent that can run shell commands in your local repo. Python 3 is optional, for the checker. Chat-only apps such as the Claude or ChatGPT web apps can't use it, because they can't see your repo.
 
-First, clone this repo somewhere permanent:
+1. Clone this repo somewhere permanent:
 
-```bash
-git clone https://github.com/Iknowitsimpossible/readme-organizer.git ~/code/readme-organizer
-```
+   ```bash
+   git clone https://github.com/Iknowitsimpossible/readme-organizer.git ~/code/readme-organizer
+   ```
 
-Then link the skill folder to where your agent looks for skills. Using a link instead of a copy means `git pull` updates the skill.
+2. Link the skill into your agent's skills folder. A link instead of a copy means `git pull` updates the skill. For Claude Code:
 
-**Claude Code**
+   ```bash
+   mkdir -p ~/.claude/skills
+   ln -s ~/code/readme-organizer/skills/readme-organizer ~/.claude/skills/readme-organizer
+   ```
 
-```bash
-mkdir -p ~/.claude/skills
-ln -s ~/code/readme-organizer/skills/readme-organizer ~/.claude/skills/readme-organizer
-```
+   For another agent, use the same two commands with its folder:
 
-**Codex**
+   | Agent | All projects | One project | Call it by name |
+   |---|---|---|---|
+   | Claude Code | `~/.claude/skills/` | `.claude/skills/` | `/readme-organizer` |
+   | Codex (restart after installing) | `~/.agents/skills/` | `.agents/skills/` | `$readme-organizer` |
+   | Other Agent Skills agents | see your agent's docs | | |
 
-```bash
-mkdir -p ~/.agents/skills
-ln -s ~/code/readme-organizer/skills/readme-organizer ~/.agents/skills/readme-organizer
-```
-
-Restart Codex afterward so it picks up the new skill.
-
-**Other agents with Agent Skills support:** link or copy `skills/readme-organizer` into the folder your agent reads skills from.
-
-**Agents without skills support** (for example Cursor or Copilot): they can't load it automatically, but they can follow it. Ask: *"Follow the instructions in ~/code/readme-organizer/skills/readme-organizer/SKILL.md to review my README."*
-
-To install for a single project only, put the folder in that project's `.claude/skills/` (Claude Code) or `.agents/skills/` (Codex).
-
-This skill isn't meant for chat-only apps such as the Claude or ChatGPT web apps. Its first step runs `git status` on your project, so it needs an agent with access to your local repo.
+Agents without skills support (for example Cursor or Copilot) can still follow it. Ask: *"Follow the instructions in ~/code/readme-organizer/skills/readme-organizer/SKILL.md to review my README."*
 
 ## Usage
 
-Commit and push your project first. The skill checks for this before it starts. Then, inside the project, ask your agent:
+Commit and push your project first. The skill checks this before it starts. Then, inside the project, ask your agent:
 
 ```text
 Review my README
 ```
 
-or *"Write a README for this project"*. You can also call it by name: `/readme-organizer` in Claude Code, `$readme-organizer` in Codex.
-
-What happens:
+or *"Write a README for this project"*. The skill then:
 
 1. Checks that the project is committed and pushed.
 2. Reads manifests, entry points, scripts, and deploy configs.
@@ -99,11 +56,34 @@ What happens:
 4. Writes `README.md`, or `README-SUGGESTIONS.md` if a README already exists.
 5. Runs the checker, fixes anything it flags, and lists the `TODO` markers left for you (screenshots, deploy URLs, and so on).
 
-You can also run the checker on any README yourself:
+### Run the checker by itself
+
+The checker works without an agent, on any README:
 
 ```bash
 python3 ~/code/readme-organizer/skills/readme-organizer/scripts/check_readme.py path/to/project
 ```
+
+### Example output
+
+<!-- check-readme: off -->
+From a real run on [penalty-night](https://github.com/Iknowitsimpossible/penalty-night), a browser game. The skill noticed that `package.json` requires Node 22.12+ and that newcomers wouldn't know to clone first:
+
+````diff
+ ## Run it yourself
+
++Requires [Node.js](https://nodejs.org) 22.12 or newer.
++
+ ```bash
++git clone https://github.com/Iknowitsimpossible/penalty-night.git
++cd penalty-night
+ npm install
+ npm run dev
+ ```
+````
+<!-- check-readme: on -->
+
+It also flagged the missing gameplay GIF and license, and said to keep the controls table and the deliberately short length. Full output: [examples/penalty-night-suggestions.md](examples/penalty-night-suggestions.md).
 
 ## Development
 
@@ -125,6 +105,8 @@ tools/validate_skill.py         # validates skill structure and frontmatter
 tests/                          # checker unit tests + manual test cases
 examples/                       # real output from test runs
 ```
+
+## Acknowledgments
 
 The writing guidance draws on [banesullivan/README](https://github.com/banesullivan/README). The skill's structure follows Anthropic's [guide to building skills](https://resources.anthropic.com/hubfs/The-Complete-Guide-to-Building-Skill-for-Claude.pdf).
 

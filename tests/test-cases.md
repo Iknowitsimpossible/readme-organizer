@@ -20,7 +20,7 @@ Start a fresh session inside a finished project and send each prompt. Record whe
 - "Write a CHANGELOG for v2"
 - "Generate API reference docs for this library"
 - "Fix the failing test in tests/ball.test.js"
-- "Write a README for this skill" (while editing a skill's own repo)
+- "Write the SKILL.md for a new skill"
 
 Target: at least 4 of 5 in each list.
 
