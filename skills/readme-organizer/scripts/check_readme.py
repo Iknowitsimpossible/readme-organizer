@@ -15,6 +15,9 @@ Checks:
   - `git clone` URLs match the repo's origin remote
   - lists TODO markers left in the file
 
+To skip a section, such as an example quoted from another project, wrap it in
+<!-- check-readme: off --> and <!-- check-readme: on -->.
+
 Exit code: 0 if no errors, 1 if any error, 2 on bad usage.
 Standard library only.
 """
@@ -28,6 +31,8 @@ FENCE = re.compile(r"^(`{3,}|~{3,})")
 MD_LINK = re.compile(r"!?\[[^\]]*\]\(([^)\s]+)(?:\s+\"[^\"]*\")?\)")
 HTML_SRC = re.compile(r"<(?:img|a)\b[^>]*?(?:src|href)=\"([^\"]+)\"", re.IGNORECASE)
 TODO = re.compile(r"<!--\s*TODO|\bTODO:")
+CHECK_OFF = re.compile(r"<!--\s*check-readme:\s*off\s*-->")
+CHECK_ON = re.compile(r"<!--\s*check-readme:\s*on\s*-->")
 
 # Built-in npm commands that don't need a matching script.
 NPM_BUILTINS = {"install", "i", "ci", "init", "update", "outdated", "audit", "link", "publish", "pack", "exec", "x"}
@@ -42,7 +47,14 @@ def split_code_and_prose(text):
     """Return (code_lines, prose_lines) as lists of (line_number, line)."""
     code, prose = [], []
     fence = None
+    skipping = False
     for number, line in enumerate(text.splitlines(), start=1):
+        if CHECK_OFF.search(line):
+            skipping = True
+        elif CHECK_ON.search(line):
+            skipping = False
+        if skipping:
+            continue
         marker = FENCE.match(line.strip())
         if marker:
             if fence is None:
@@ -143,7 +155,9 @@ def check_commands(code, repo, tracked):
         # python / node entry files
         elif words[0] in ("python", "python3", "node") and len(words) > 1:
             target = words[1]
-            if target.endswith((".py", ".js", ".mjs", ".cjs")) and target not in tracked:
+            # Paths outside the repo (~/..., /usr/...) can't be checked against git.
+            is_relative = not target.startswith(("~", "/", "$"))
+            if is_relative and target.endswith((".py", ".js", ".mjs", ".cjs")) and target not in tracked:
                 errors.append((number, f"`{line}`: {target} is not a tracked file"))
 
         # git clone URL

@@ -2,10 +2,10 @@
 name: readme-organizer
 description: Writes or reviews the README of a finished software project. Detects the project type (web app, library, CLI tool, game, data/ML, coursework) and produces a README covering what it does, how to install it, and how to use it, with every command checked against the repo. Reviews an existing README by suggesting fixes and never overwrites it. Use when the user says "write a README", "review my README", "improve/fix/organize my README", "document this project for GitHub", or "my project is done, make it presentable". Do NOT use for projects still in early development, for API reference docs, changelogs, or docstrings, or for README files of the skill itself.
 license: MIT
-compatibility: Designed for Claude Code. Needs a local git repository, shell access, and Python 3 for the bundled checker.
+compatibility: Works with any coding agent that supports Agent Skills and can run shell commands in a local git repository (for example Claude Code or Codex). Python 3 is optional, for the bundled checker. Not for chat-only apps without access to the repo.
 metadata:
   author: Iknowitsimpossible
-  version: 1.1.0
+  version: 1.2.0
 ---
 
 # README Organizer
@@ -31,7 +31,7 @@ git log --oneline -5
 ```
 
 - **Tracked changes or unpushed commits:** tell the user and ask whether to continue. The README should describe what is actually pushed.
-- **Untracked files:** ignore them, unless they look like project source (for example a new `src/` file). Tool and editor folders such as `.claude/`, `.vscode/`, `.idea/`, `.DS_Store`, and an old `README-SUGGESTIONS.md` never count.
+- **Untracked files:** ignore them, unless they look like project source (for example a new `src/` file). Agent and editor folders such as `.claude/`, `.agents/`, `.codex/`, `.cursor/`, `.vscode/`, `.idea/`, `.DS_Store`, and an old `README-SUGGESTIONS.md` never count.
 - **Very few commits, with stubs or TODOs throughout the code:** say the project looks unfinished and ask before continuing.
 - Otherwise continue without asking.
 
@@ -89,7 +89,11 @@ python3 scripts/check_readme.py <repo-dir> README-SUGGESTIONS.md   # for suggest
 
 (`scripts/` is relative to this skill's folder.) It flags `npm`/`yarn`/`pnpm`/`make` commands with no matching script or target, `python`/`node` files that aren't tracked, links and images to missing files, clone URLs that don't match `origin`, and lists TODO markers.
 
-For each error, fix the text and run the checker again. Stop when it reports 0 errors. Then confirm the checks a script can't do:
+For each error, fix the text and run the checker again. Stop when it reports 0 errors. If an error comes from content quoted from another project on purpose (a before/after example), wrap that section in `<!-- check-readme: off -->` and `<!-- check-readme: on -->` instead of changing it.
+
+**If you can't run Python**, do the same checks by hand: for each `npm`/`yarn`/`pnpm run X`, confirm `X` is in `package.json` scripts; for each `make X`, confirm the Makefile target; for each relative link or image, confirm the path appears in `git ls-files`; confirm any `git clone` URL matches `git remote get-url origin`.
+
+Then confirm the checks a script can't do:
 
 - [ ] the three core topics (what, install, use) are covered, in that order;
 - [ ] a stranger could go from `git clone` to a running project using only the README;

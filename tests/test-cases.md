@@ -1,6 +1,6 @@
 # Test cases
 
-Run these by hand in Claude Code after changing the skill. They follow the three test areas in Anthropic's skill-building guide: triggering, functional, and checker.
+Run these by hand in a coding agent that supports skills (Claude Code, Codex, ...) after changing the skill. Run the triggering tests in both if you can, since each agent decides from the description on its own. They follow the three test areas in Anthropic's skill-building guide: triggering, functional, and checker.
 
 ## 1. Triggering
 
@@ -42,3 +42,12 @@ python3 skills/readme-organizer/scripts/check_readme.py ~/code/penalty-night
 ```
 
 Expected: `0 error(s)`. Then plant errors in a scratch copy of a README (an `npm start` with no start script, a link to `docs/missing.png`, a wrong clone URL) and confirm each one is reported.
+
+## 4. Automated
+
+CI runs these on every push (see `.github/workflows/ci.yml`). To run them locally:
+
+```bash
+python3 tools/validate_skill.py
+python3 -m unittest discover tests
+```
